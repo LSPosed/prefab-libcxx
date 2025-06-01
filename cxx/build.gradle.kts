@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.agp.lib)
     alias(libs.plugins.lsplugin.jgit)
-    alias(libs.plugins.lsplugin.publish)
     alias(libs.plugins.lsplugin.cmaker)
     `maven-publish`
     signing
@@ -13,7 +12,6 @@ val androidBuildToolsVersion: String by rootProject.extra
 val androidCompileSdkVersion: Int by rootProject.extra
 val androidNdkVersion: String by rootProject.extra
 val androidCmakeVersion: String by rootProject.extra
-
 
 android {
     compileSdk = androidCompileSdkVersion
@@ -55,13 +53,6 @@ android {
         }
     }
     namespace = "org.lsposed.libcxx"
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
 }
 
 cmaker {
@@ -85,37 +76,30 @@ cmaker {
     }
 }
 
+group = "org.lsposed.libcxx"
+version = androidNdkVersion
+
 publish {
     githubRepo = "LSPosed/prefab-libcxx"
-    publications {
-        register<MavenPublication>("libcxx") {
-            artifactId = "libcxx"
-            afterEvaluate {
-                from(components.getByName("release"))
-            }
-            group = "org.lsposed.libcxx"
-            version = androidNdkVersion
-            pom {
-                name.set("libcxx")
-                description.set("libcxx")
-                url.set("https://github.com/LSPosed/prefab-libcxx")
-                licenses {
-                    license {
-                        name.set("Apache v2.0")
-                        url.set("https://github.com/llvm/llvm-project/blob/main/LICENSE.TXT")
-                    }
-                }
-                developers {
-                    developer {
-                        name.set("LLVM")
-                        url.set("https://llvm.org/")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:https://github.com/LSPosed/prefab-libcxx.git")
-                    url.set("https://github.com/LSPosed/prefab-libcxx")
-                }
-            }
-        }
+    publications("libcxx") {
+	name.set("libcxx")
+	description.set("libcxx")
+	url.set("https://github.com/LSPosed/prefab-libcxx")
+	licenses {
+	    license {
+		name.set("Apache v2.0")
+		url.set("https://github.com/llvm/llvm-project/blob/main/LICENSE.TXT")
+	    }
+	}
+	developers {
+	    developer {
+		name.set("LLVM")
+		url.set("https://llvm.org/")
+	    }
+	}
+	scm {
+	    connection.set("scm:git:https://github.com/LSPosed/prefab-libcxx.git")
+	    url.set("https://github.com/LSPosed/prefab-libcxx")
+	}
     }
 }

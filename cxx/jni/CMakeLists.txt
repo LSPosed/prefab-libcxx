@@ -4,7 +4,7 @@ project(cxx)
 
 file(GLOB LIBCXX_SOURCES "libcxx/src/*.cpp" "libcxx/src/filesystem/*.cpp")
 
-list(FILTER LIBCXX_SOURCES EXCLUDE REGEX ".*/(tzdb_list|tz|iostream|ostream|fstream|regex|ios.instantiations|strstream)\.cpp$")
+list(FILTER LIBCXX_SOURCES EXCLUDE REGEX ".*/(tzdb|time_zone|tzdb_list|tz|iostream|ostream|fstream|regex|ios.instantiations|strstream)\.cpp$")
 
 message(STATUS "LIBCXX_SOURCES: ${LIBCXX_SOURCES}")
 
@@ -15,8 +15,9 @@ set(LIBCXX_EXPORT_FLAGS
         -D_LIBCPP_BUILDING_LIBRARY
         -D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS
         -D_LIBCXXABI_NO_EXCEPTIONS
+	-D_LIBCPP_HAS_NO_INCOMPLETE_PSTL
 )
-set(LIBCXX_FLAGS -fvisibility-global-new-delete-hidden)
+set(LIBCXX_FLAGS -fvisibility-global-new-delete=force-hidden)
 set(LIBCXX_EXPORT_INCLUDES libcxx/include)
 set(LIBCXX_INCLUDES libcxx/src)
 
