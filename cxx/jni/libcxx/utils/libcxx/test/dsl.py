@@ -8,8 +8,8 @@
 
 import os
 import pickle
-import pipes
 import platform
+import shlex
 import shutil
 import tempfile
 
@@ -274,14 +274,9 @@ def hasAnyLocale(config, locales):
     %{exec} -- this means that the command may be executed on a remote host
     depending on the %{exec} substitution.
     """
-  # Bionic's locale support is simplistic: it only recognizes two locales, "C"
-  # (aka "POSIX") and "C.UTF-8" (aka "en_US.UTF-8"). The locale mode determines
-  # the MB_CUR_MAX, but there is no true locale stuff (e.g. number formatting).
-  # Treat Bionic as if it lacks locales.
     program = """
     #include <stddef.h>
-    #include <stdlib.h>
-    #if defined(_LIBCPP_HAS_NO_LOCALIZATION) || defined(__BIONIC__)
+    #if defined(_LIBCPP_HAS_NO_LOCALIZATION)
       int main(int, char**) { return 1; }
     #else
       #include <locale.h>
@@ -295,7 +290,7 @@ def hasAnyLocale(config, locales):
       }
     #endif
   """
-    return programSucceeds(config, program, args=[pipes.quote(l) for l in locales])
+    return programSucceeds(config, program, args=[shlex.quote(l) for l in locales])
 
 
 @_memoizeExpensiveOperation(lambda c, flags="": (c.substitutions, c.environment, flags))
@@ -313,8 +308,8 @@ def compilerMacros(config, flags=""):
         with open(test.getSourcePath(), "w") as sourceFile:
             sourceFile.write(
                 """
-      #if __has_include(<__config_site>)
-      #  include <__config_site>
+      #if __has_include(<__config>)
+      #  include <__config>
       #endif
       """
             )
